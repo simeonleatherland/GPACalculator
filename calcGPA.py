@@ -1,48 +1,69 @@
 import PyPDF2 as pdf
-def main():
+def __main__():
     print("-------------")
     print("Simple GPA Calculator")
     print("Input : Credit Hours : 12.5 OR 25")
     print("Input : Mark : 0 - 100")
     print("-------------")
-    fileName = input("Enter the name of the file (make sure its in the same directory as this program\n")
-    pdfFileObj = open(fileName, "rb")
-    pdfRead = pdf.PdfFileReader(pdfFileObj)
-    numpages = pdfRead.numPages
-    allText = ""
-    for ii in range(numpages):
-        pageObj = pdfRead.getPage(ii)
-        allText += (pageObj.extractText())
+    try:
+        fileName = input("Enter the name of the file (make sure its in the same directory as this program\n")
+        pdfFileObj = open(fileName, "rb")
+        pdfRead = pdf.PdfFileReader(pdfFileObj)
+        numpages = pdfRead.numPages
+        allText = ""
+        for ii in range(numpages):
+            pageObj = pdfRead.getPage(ii)
+            allText += (pageObj.extractText())
 
+        
 
-    #marks
-    
-    allText = allText.replace("25.0", " 25.0 ")
-    allText = allText.replace("15.5", " 15.5 ")
-    allText = allText.replace("Semester", " Semester ")
-    allText = allText.replace("\n", " ENDOFLINE ")
-    allText = allText.split(" ")
+        # marks
+        allText = allText.replace("25.0", " 25.0 ")
+        allText = allText.replace("15.5", " 15.5 ")
+        allText = allText.replace("Semester", " Semester ")
+        allText = allText.replace("\n", " ENDOFLINE ")
+        allText = allText.split(" ")
 
-    indexOfMarks = allText.index("Semester")
-    allText = allText[indexOfMarks:]
+        indexOfMarks = allText.index("Semester")
+        allText = allText[indexOfMarks:]
 
-    #print(allText)
-    totalProduct = 0.0
-    totalCreditHours = 0.0
-    for ii in range(len(allText)):
-        if allText[ii] == "25.0" :
-            mark = int(allText[ii+1][1:3])
+        totalProduct = 0.0
+        totalCreditHours = 0.0
+        for ii in range(len(allText)):
+            try:
+                if not allText[ii + 1][1:2] == "D":
+                    if allText[ii + 1][1:2] == "X":  # passed
+                        if allText[ii] == "25.0":
+                            mark = int(allText[ii + 1][2:4])
 
-            totalCreditHours += 25.0
-            totalProduct += (25.0 * calcVal(mark))
+                            totalCreditHours += 25.0
+                            totalProduct += (25.0 * calcVal(mark))
+                            print(mark)
 
-        elif allText[ii] == "12.5":
-            mark = int(allText[ii+1][1:3])
+                        elif allText[ii] == "12.5":
+                            mark = int(allText[ii + 1][2:4])
 
-            totalCreditHours += 12.5
-            totalProduct += (12.5 * calcVal(mark))
+                            totalCreditHours += 12.5
+                            totalProduct += (12.5 * calcVal(mark))
+                    else:
+                        if allText[ii] == "25.0":
+                            mark = int(allText[ii + 1][1:3])
 
-    print("GPA: " + str(totalProduct/totalCreditHours))
+                            totalCreditHours += 25.0
+                            totalProduct += (25.0 * calcVal(mark))
+                            print(mark)
+
+                        elif allText[ii] == "12.5":
+                            mark = int(allText[ii + 1][1:3])
+
+                            totalCreditHours += 12.5
+                            totalProduct += (12.5 * calcVal(mark))
+            except IndexError:
+                None  # literally ignore this if they withdrew
+
+        print("GPA: " + str(totalProduct / totalCreditHours))
+    except:
+        print("File incorrect format")
 
 def calcVal(mark):
     if 100.0 >= mark >= 80.0:
@@ -62,5 +83,5 @@ def calcVal(mark):
 
     return qualityPoint
 if __name__ == "__main__":
-    main()
+    __main__()
 
